@@ -1,0 +1,21 @@
+{
+    "name": "thecodeholic/phpmvc-framework",
+    "authors": [
+        {
+            "name": "Zura Sekhniashvili",
+            "email": "zurasekhniashvili@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "app\\": ".",
+            "Core\\": "./core",
+            "Altendev\\": "./src"
+        }
+    },
+    "require": {
+        "vlucas/phpdotenv": "^5.0",
+        "thecodeholic/php-mvc-core": "^v1.0.5",
+        "phpoffice/phpspreadsheet": "^1.25"
+    }
+}
