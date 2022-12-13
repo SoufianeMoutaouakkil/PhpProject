@@ -23,12 +23,11 @@ abstract class BaseField
             '<div class="form-group">
                 <label>%s</label>
                 %s
-                <div class="invalid-feedback">
-                    %s
-                </div>
+                <div class="invalid-feedback" id="%s">%s</div>
             </div>',
             $this->entity->getLabel($this->attribute),
             $this->renderInput(),
+            "error-" . $this->attribute,
             $this->entity->getFirstError($this->attribute)
         );
     }

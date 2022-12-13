@@ -5,7 +5,7 @@ use Altendev\Controller\UserController;
 
 return
 [
-    "DATABASE_SERVER" => "MYSQL",
+    "DATABASE_SERVER" => "SQLITE",
     "DATABASE_CONFIG" => [
         "MYSQL" => [
             "DB_USER" => "root",
@@ -21,7 +21,6 @@ return
     "ROUTES" => [
         "get" => [
             "/" => [TestController::class, "home"],
-            "/parc" => [ParcController::class, "form"],
             "/login" => [UserController::class, "login"],
             "/logout" => [UserController::class, "logout"],
             "paramsPath/{paramName:\d}" => [TestController::class, "digitParam"],
@@ -29,8 +28,6 @@ return
         ],
         "post" => [
             "/login" => [UserController::class, "login"],
-            "parc/{pm}" => [ParcController::class, "apiGetPm"],
-            "path1" => [TestController::class, "postMethod1"],
         ]
     ],
 

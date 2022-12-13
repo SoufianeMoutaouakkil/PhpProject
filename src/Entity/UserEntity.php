@@ -13,6 +13,17 @@ class UserEntity extends Entity
     public $firstname;
     public $lastname;
 
+    public function properties()
+    {
+        return [
+            "id",
+            "login",
+            "mail",
+            "password",
+            "firstname",
+            "lastname",
+        ];
+    }
     public function rules()
     {
         return [
@@ -28,10 +39,13 @@ class UserEntity extends Entity
     public function labels()
     {
         return [
+            'id' => 'ID',
             'login' => "Login",
-            'mail' => "E-mail",
             'password' => "Mot de passe",
-            'confirmPassword' => "Confirmation de mot de passe"
+            'confirmPassword' => "Confirmation de mot de passe",
+            'mail' => "E-mail",
+            'lastname' => "Nom",
+            'firstname' => "Pénom",
         ];
     }
 }

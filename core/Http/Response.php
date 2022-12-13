@@ -39,6 +39,7 @@ class Response
             if (isset($this->data)) {
                 $result["data"] = $this->data;
             }
+            
             echo json_encode($result);
         }
     }

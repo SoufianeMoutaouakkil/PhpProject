@@ -13,6 +13,8 @@ class Router
 {
     private array $routes = [];
     private static $sInstance;
+    private $url;
+    private $method;
 
     /**
      * Singleton parts

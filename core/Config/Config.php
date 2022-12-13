@@ -91,9 +91,9 @@ class Config
      *      [$configName => $filePath (string)]
      * ]
      *
-     * @throws \Altendev\Config\Exception\InvalidConfigNameException
-     * @throws \Altendev\Config\Exception\InvalidPathException
-     * @throws \Altendev\Config\Exception\InvalideFileExtException
+     * @throws \Core\Config\Exception\InvalidConfigNameException
+     * @throws \Core\Config\Exception\InvalidPathException
+     * @throws \Core\Config\Exception\InvalidFileExtException
      *
      * @return void
      */
@@ -137,7 +137,7 @@ class Config
      *      [$configName => $ConfigValue (mixed)]
      * ]
      *
-     * @throws \Altendev\Config\Exception\InvalidConfigNameException
+     * @throws \Core\Config\Exception\InvalidConfigNameException
      *
      * @return void
      */
@@ -169,7 +169,7 @@ class Config
      *      [$configName => $filePath (string)]
      * ]
      *
-     * @throws \Altendev\Config\Exception\InvalideFileContentException
+     * @throws \Core\Config\Exception\InvalidFileContentException
      *
      * @return void
      */
@@ -214,7 +214,7 @@ class Config
      * $configArray = [
      *      [$configName => $ConfigValue (mixed)]
      * ]
-     * @throws \Altendev\Config\Exception\InvalideFileContentException
+     * @throws \Core\Config\Exception\InvalidFileContentException
      *
      * @return void
      */

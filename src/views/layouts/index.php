@@ -39,7 +39,7 @@ $app = App::app();
 
     <main class="mt-5 pt-3">
         <div class="container-fluid">
-            <?php echo $content ?>
+            <?php echo (string) $content ?>
         </div>
     </main>
 
