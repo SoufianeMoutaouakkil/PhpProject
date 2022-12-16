@@ -10,6 +10,8 @@ abstract class BaseField
     public Entity $entity;
     public string $attribute;
     public string $type;
+    public ?string $event = null;
+    public ?string $fnName = null;
 
     public function __construct(Entity $entity, string $attribute)
     {
@@ -17,17 +19,28 @@ abstract class BaseField
         $this->attribute = $attribute;
     }
 
+    protected function getEvent()
+    {
+        return is_null($this->event) ? "" : 'on'.$this->event.'="'.$this->fnName.'()"';
+    }
+
+    protected function getErrorTagId()
+    {
+        return "error-" . $this->attribute;
+    }
+    
     public function __toString()
     {
         return sprintf(
-            '<div class="form-group">
-                <label>%s</label>
+            '<div class="form-group mb-3">
+                <label for="%s">%s</label>
                 %s
                 <div class="invalid-feedback" id="%s">%s</div>
             </div>',
+            $this->attribute,
             $this->entity->getLabel($this->attribute),
             $this->renderInput(),
-            "error-" . $this->attribute,
+            $this->getErrorTagId(),
             $this->entity->getFirstError($this->attribute)
         );
     }

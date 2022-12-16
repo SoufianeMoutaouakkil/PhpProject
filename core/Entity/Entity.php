@@ -6,6 +6,8 @@ use Core\Database\Database;
 
 abstract class Entity
 {
+    public $id = null;
+
     const RULE_REQUIRED = 'required';
     const RULE_EMAIL = 'email';
     const RULE_MIN = 'min';
@@ -17,10 +19,9 @@ abstract class Entity
 
     public function loadData($data)
     {
-        foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->{$key} = $value;
-            }
+        $props = $this->properties();
+        foreach ($props as $prop) {
+            $this->{$prop} = $data[$prop] ?? "undefined";
         }
     }
 
@@ -33,10 +34,17 @@ abstract class Entity
         return $this->labels()[$attribute] ?? $attribute;
     }
 
-    public function validate()
+    public function validate($action = "create")
     {
         foreach ($this->rules() as $attribute => $rules) {
             $value = $this->{$attribute};
+            if ($value === "undefined") {
+                if ($action === "update") {
+                    continue;
+                } else {
+                    $value = null;
+                }
+            }
             foreach ($rules as $rule) {
                 $ruleName = $rule;
                 if (!is_string($rule)) {
@@ -48,8 +56,7 @@ abstract class Entity
                 }
             }
         }
-
-        return !empty($this->errors);
+        return empty($this->errors);
     }
 
     private function ruleRequired($rule, $attribute, $value)
@@ -86,17 +93,19 @@ abstract class Entity
             $this->addErrorByRule($attribute, self::RULE_MATCH, ['match' => $rule['match']]);
         }
     }
-    
+
     private function ruleUnique($rule, $attribute, $value)
     {
         $className = $rule['class'];
         $uniqueAttr = $rule['attribute'] ?? $attribute;
         $tableName = $className::tableName();
+        $id = $rule["id"] ?? '';
+        // var_dump($rule);
         $db = Database::dbFactory();
-        $statement = $db->prepare("SELECT * FROM $tableName WHERE $uniqueAttr = :$uniqueAttr");
-        $statement->bindValue(":$uniqueAttr", $value);
-        $statement->execute();
-        $record = $statement->fetchObject();
+        $record = $db->prepare(
+            "SELECT * FROM $tableName WHERE $uniqueAttr = :$uniqueAttr and id != :id",
+            [$value, $id]
+        );
         if ($record) {
             $this->addErrorByRule($attribute, self::RULE_UNIQUE);
         }
@@ -149,12 +158,30 @@ abstract class Entity
     {
         $res = [];
         foreach ($this->properties() as $prop) {
-            $res[$prop] = [];
-            $res[$prop]["label"] = $this->labels()[$prop];
-            $res[$prop]["errors"] = $this->errors[$prop] ?? null;
-            $res[$prop]["value"] = $this->{$prop};
+            $res["id"] = $this->id;
+            $res["labels"][$prop] = $this->labels()[$prop];
+            $res["errors"][$prop] = $this->errors[$prop] ?? null;
+            $res["values"][$prop] = $this->{$prop};
         }
 
         return $res;
+    }
+    public function updateFields()
+    {
+        $res = [];
+        foreach ($this->properties() as $prop) {
+            if ($this->{$prop} !== "undefined") {
+                $res[$prop] = $this->{$prop};
+            }
+        }
+
+        return $res;
+    }
+
+    public static function tableName()
+    {
+        $parts = explode('\\', get_called_class());
+        $className = end($parts);
+        return strtolower(str_replace('Entity', '', $className)) . 's';
     }
 }

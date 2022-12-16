@@ -22,12 +22,16 @@ return
         "get" => [
             "/" => [TestController::class, "home"],
             "/login" => [UserController::class, "login"],
+            "/profile" => [UserController::class, "profile"],
+            "/profile/info" => [UserController::class, "profileInfo"],
+            "/profile/update" => [UserController::class, "postProfile"],
             "/logout" => [UserController::class, "logout"],
             "paramsPath/{paramName:\d}" => [TestController::class, "digitParam"],
             "paramsPath/{paramName}" => [TestController::class, "param"],
         ],
         "post" => [
             "/login" => [UserController::class, "login"],
+            "/profile/update" => [UserController::class, "postProfile"],
         ]
     ],
 

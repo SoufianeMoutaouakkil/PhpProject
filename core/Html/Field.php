@@ -19,13 +19,21 @@ class Field extends BaseField
     public function renderInput()
     {
         return sprintf(
-            '<input type="%s" class="form-control %s" name="%s" id="%s" value="%s">',
+            '<input type="%s" class="form-control %s" name="%s" id="%s" value=%s %s>',
             $this->type,
             $this->entity->hasError($this->attribute) ? 'is-invalid' : '',
             $this->attribute,
             $this->attribute,
             $this->entity->{$this->attribute},
+            $this->getEvent(),
         );
+    }
+
+    public function on(string $event, string $fnName)
+    {
+        $this->event = $event;
+        $this->fnName = $fnName;
+        return $this;
     }
 
     public function passwordField()

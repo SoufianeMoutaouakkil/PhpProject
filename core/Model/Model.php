@@ -2,22 +2,31 @@
 
 namespace Core\Model;
 
+use ReflectionClass;
 use Core\Database\Database;
 
 abstract class Model
 {
 
     protected $table;
+    protected $class;
     protected $db;
 
-    public function __construct(Database $db)
+    public function __construct(Database $db = null)
     {
+        if (is_null($db)) {
+            $db = Database::dbFactory();
+        }
         $this->db = $db;
         if (is_null($this->table)) {
             $parts = explode('\\', get_class($this));
             $className = end($parts);
             $this->table = strtolower(str_replace('Model', '', $className)) . 's';
         }
+
+        $class = str_replace('Model', 'Entity', get_class($this));
+        $this->class = (new ReflectionClass($class))->isInstantiable() ? $class : "stdClass";
+
     }
 
     public function all()
@@ -76,10 +85,7 @@ abstract class Model
         );
     }
 
-    /**
-     * ??????????
-     */
-    public function extract($key, $value)
+    public function allAsKeyValue($key, $value)
     {
         $records = $this->all();
         $return = [];
@@ -95,13 +101,13 @@ abstract class Model
             return $this->db->prepare(
                 $statement,
                 $attributes,
-                str_replace('Model', 'Entity', get_class($this)),
+                $this->class,
                 $one
             );
         } else {
             return $this->db->query(
                 $statement,
-                str_replace('Model', 'Entity', get_class($this)),
+                $this->class,
                 $one
             );
         }

@@ -11,8 +11,8 @@ use Core\Html\Form;
 <?php $form = Form::begin('', 'post') ?>
     <?php echo $form->field($entity, 'login') ?>
     <?php echo $form->field($entity, 'password')->passwordField() ?>
-    <button class="btn btn-success mt-2" onclick="userLogin()" id="btn-login">Se conecter</button>
+    <button class="btn btn-success mt-2" onclick="userLogin()" id="btn-login">Se connecter</button>
 <?php Form::end() ?>
 
 
-<script src="/js/user-login.js"></script>
+<script src="/js/user/login.js"></script>

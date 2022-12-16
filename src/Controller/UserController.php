@@ -13,6 +13,11 @@ use Core\View\View;
 
 class UserController extends Controller
 {
+    private UserModel $model;
+    public function __construct()
+    {
+        $this->model = new UserModel();
+    }
     public function login(Request $req)
     {
         $entity = new UserEntity();
@@ -33,8 +38,7 @@ class UserController extends Controller
     {
         $data = $req->getData();
         $entity->loadData($data);
-        $model = new UserModel(Database::dbFactory());
-        $user = $model->findByField("login", $entity->login);
+        $user = $this->model->findByField("login", $entity->login);
         if (!$user) {
             $entity->addError('login', "Ce login n'exist pas!");
         } else {
@@ -56,8 +60,7 @@ class UserController extends Controller
         $logged = false;
         $data = $req->getData();
         $entity->loadData($data);
-        $model = new UserModel(Database::dbFactory());
-        $user = $model->findByField("login", $entity->login);
+        $user = $this->model->findByField("login", $entity->login);
         if (!$user) {
             $entity->addError('login', "Ce login n'exist pas!");
         } else {
@@ -79,8 +82,58 @@ class UserController extends Controller
     public function logout(Request $req)
     {
         (new Session())->remove("user-id");
-        header("location: /login");
+        if ($req->isApi) {
+            (new Response(["done" => true]))->send();
+        } else {
+            header("location: /login");
+        }
         exit;
     }
 
+    public function profile(Request $req)
+    {
+        $entity = $this->getUser();
+
+        $view = new View("user.profile");
+        $res = new Response(["entity" => $entity], null, $view);
+        $res->send();
+    }
+
+    public function profileInfo(Request $req)
+    {
+        $entity = $this->getUser();
+        $res = new Response(["entity" => $entity->toArray()]);
+        $res->send();
+    }
+
+    public function postProfile(Request $req)
+    {
+        $entity = new UserEntity();
+        $entity->loadData($req->data);
+        $userId = $this->getUser()->id;
+        $entity->id = $userId;
+        $fields = $entity->updateFields();
+
+        if ($entity->validate("update")) {
+            $this->model->update($userId, $fields);
+            $isUpdated = true;
+        } else {
+            $isUpdated = false;
+        }
+        $res = new Response(["updated" => $isUpdated, "entity" => $entity]);
+        $res->send();
+    }
+    
+
+    public function apiProfile(Request $req, UserEntity $entity)
+    {
+        # some instructions
+    }
+
+    private function getUser($id = null) : UserEntity
+    {
+        $userId = $id === null ? (new Session())->get("user-id") : $id;
+        
+        return $this->model->find($userId);
+    }
 }
